@@ -3,7 +3,7 @@ import Home from "./Home";
 import Login from "./Auth/Login";
 import ForgotPassword from "./Auth/ForgotPassword";
 import ResetPassword from "./Auth/ResetPassword";
-import Post from "./Post";
+import Post from "./UploadImage";
 
 import { Route,Routes,} from "react-router-dom";
 function App() {
@@ -17,7 +17,7 @@ function App() {
          <Route path="/reset-password/:token" element={<ResetPassword/>}/>
          <Route path="/post" element={<Post/>}/>
        </Routes>
-  
+
   );
 }
 
