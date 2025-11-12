@@ -1,25 +1,25 @@
-let mongoose=     require('mongoose')
- let userSchema=   mongoose.Schema({
-    userName:{
-        type:String,
-        required:true
-    },
-    email:{
-        type:String,
-        required:true
+const mongoose = require("mongoose");
 
-    },passWord:{
-        type:String,
+const userSchema = new mongoose.Schema({
+  userName: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  passWord: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ["admin", "student", "instructor"],
+    default: "student"
+  },
+  resetToken: String,
+  resetTokenExpiry: Date
+});
 
-    },
-    role:{
-        type:String,
-        enum:['admin','student','instructor'],
-        default:'student'
-    },
-    resetToken: String,
-  resetTokenExpiry: Date,
-})
-
-let User=  mongoose.model('user',userSchema)
-module.exports=User
+module.exports = mongoose.model("user", userSchema);
