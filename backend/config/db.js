@@ -2,13 +2,10 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect('mongodb://127.0.0.1:27017/udemy', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    await mongoose.connect("mongodb://127.0.0.1:27017/insta");
+    console.log("MongoDB Connected: 127.0.0.1");
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error("MongoDB connection failed:", error.message);
     process.exit(1);
   }
 };

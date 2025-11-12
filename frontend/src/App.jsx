@@ -1,8 +1,8 @@
-import Signup from "./Auth/Signup";
+import Signup from "./Signup";
 import Home from "./Home";
-import Login from "./Auth/Login";
-import ForgotPassword from "./Auth/ForgotPassword";
-import ResetPassword from "./Auth/ResetPassword";
+import Login from "./Login";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
 import Post from "./UploadImage";
 
 import { Route,Routes,} from "react-router-dom";
@@ -17,7 +17,6 @@ function App() {
          <Route path="/reset-password/:token" element={<ResetPassword/>}/>
          <Route path="/post" element={<Post/>}/>
        </Routes>
-
   );
 }
 
