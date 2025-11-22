@@ -1,22 +1,56 @@
 import Logo from "./assets/logo.png";
 import Me from "./assets/me.jpg";
-import post from "./assets/post.png";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 const Home = () => {
-const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const username = localStorage.getItem("username");
 
-useEffect(() => {
-  axios.get("http://localhost:3000/api/uploaded")
-    .then((res) => {
-      console.log("Fetched Images:", res.data);
-      setPosts(res.data);
-    })
-    .catch(err => console.log(err));
-}, []);
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/uploaded")
+      .then((res) => {
+        console.log("Fetched Images:", res.data);
+        setPosts(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
+const toggleLike = async (index, id) => {
+  try {
+    const res = await axios.post(
+      `http://localhost:3000/api/like/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`
+        },
+      }
+    );
 
+    if (res.data.success) {
+      setPosts(prev =>
+        prev.map((post, i) =>
+          i === index
+            ? { ...post, likeCount: res.data.likeCount }
+            : post
+        )
+      );
+    } else {
+      console.log("Already liked");
+    }
+
+  } catch (err) {
+    console.error("Error liking post:", err);
+  }
+};
+
+// const logout = () => {
+//   localStorage.removeItem("authToken");
+//   localStorage.removeItem("username");
+//   navigate("/");
+// };
   return (
     <div className="bg-black  flex flex-row ">
       <div className="  w-94  border-1 border-gray-800">
@@ -139,28 +173,42 @@ useEffect(() => {
           </div>
         </div>
         <div className="ml-[140px] w-[480px] h-[520px] flex flex-col gap-3 overflow-y-scroll scrollbar-hide whitespace-nowrap">
+          {posts.map((item, index) => (
+           
+            <div
+              key={index}
+              className="relative w-[400px] h-[520px] flex-shrink-0"
+            >
+                {/* USERNAME DISPLAY */}
+ 
+  <div className="text-white text-md font-bold absolute top-0  bg-[url('/unknown.png')]  bg-cover  h-[30px] w-[30px] rounded-[50%] ">
+         <p className="ml-9 top-3">{username || "Unknown"}</p> </div>
 
 
- {posts.map((item, index) => (
-    <div key={index} className="relative w-[400px] h-[520px] flex-shrink-0">
-      
-      <img
-        className="absolute w-[400px] h-[520px] rounded-[40px]"
-        src={post}
-        alt="Post"
-      /> 
-
-      <img
-        className="mt-11 absolute w-[400px] h-[350px]"
-        src={item?.imageUrl}
-        alt="Post"
-      />
-
-    </div>
-  ))}
+              {/* <img
+                className="absolute w-[400px] h-[520px] rounded-[40px]"
+                src={post}
+                alt="Post"
+              /> */}
   
-</div>
-
+              <img
+                className="mt-11 absolute w-[400px] h-[350px]"
+                src={item?.imageUrl}
+                alt="Post"
+              />
+             <i
+            onClick={() => toggleLike(index, item._id)}
+            className=" absolute bottom-22.5 left-3.5 text-2xl fa-solid fa-heart text-red-600 cursor-pointer transition-all duration-300"></i>
+             <span className= " absolute bottom-17 left-3.5 text-l text-white ">
+                 {item.likeCount || 0} likes
+           </span>
+        <i className="absolute text-2xl bottom-22 left-13  text-white fa-regular fa-comment"></i>
+        <i className=" absolute bottom-22 left-22.5 text-2xl fa-regular fa-paper-plane text-white cursor-pointer transition-all duration-300"></i>
+        <i className=" absolute bottom-22.5 right-3.5 text-2xl fa-regular fa-bookmark text-white cursor-pointer transition-all duration-300"></i>
+            </div>
+          )
+          )}
+        </div>
       </div>
       <div className=" w-96 ">
         <div className="flex gap-1">

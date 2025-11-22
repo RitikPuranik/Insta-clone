@@ -5,7 +5,7 @@ const uploadSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  likes: {
+  likeCount: {
     type: Number,
     default: 0
   },
@@ -14,7 +14,11 @@ const uploadSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "user"
     }
-  ]
+  ],
+  username: { 
+    type: String, 
+    required: false 
+  }
 });
 
 module.exports = mongoose.model("Upload", uploadSchema);

@@ -1,65 +1,40 @@
 const express = require("express");
 const Upload = require("../models/uploadModel");
+const auth = require("../middleware/auth"); // only if using auth
+const router = express.Router();
 
-const upload = express.Router();
-
-// Existing upload route
-upload.post("/upload", async (req, res) => {
+// Only logged-in users can upload
+router.post("/upload", auth, async (req, res) => {
   try {
     const { imageUrl } = req.body;
+
     if (!imageUrl) {
       return res.status(400).json({ message: "Image URL is required" });
     }
 
-    const uploadInstance = new Upload({ imageUrl });
-    const saved = await uploadInstance.save();
+    const saved = await Upload.create({
+      imageUrl,
+      username: req.user.username  // from JWT
+    });
 
     res.json({
       success: true,
-      message: "Image URL stored successfully",
+      message: "Image uploaded successfully",
       data: saved
     });
+
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-// Get all uploads
-upload.get("/uploaded", async (req, res) => {
+router.get("/uploaded", async (req, res) => {
   try {
-    const images = await Upload.find();
-    return res.json(images);
+    const list = await Upload.find();
+    res.json(list);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-// ✅ Like/Unlike route
-upload.post("/like/:id", async (req, res) => {
-  try {
-    const { userId } = req.body; 
-    const upload = await Upload.findById(req.params.id);
-
-    if (!upload) return res.status(404).json({ message: "Image not found" });
-
-    const alreadyLiked = upload.likedBy.includes(userId);
-
-    if (alreadyLiked) {
-      upload.likedBy.pull(userId);
-      upload.likes -= 1;
-    } else {
-      upload.likedBy.push(userId);
-      upload.likes += 1;
-    }
-
-    await upload.save();
-    res.json({ success: true, likes: upload.likes, liked: !alreadyLiked });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-module.exports = upload;
+module.exports = router;   // VERY IMPORTANT
